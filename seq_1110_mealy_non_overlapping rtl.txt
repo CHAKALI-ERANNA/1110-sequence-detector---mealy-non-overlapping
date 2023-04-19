@@ -1,0 +1,49 @@
+`timescale 1ns / 1ps
+
+
+module seq_1110_mealy_non_overlapping(Dout,Din,clk,rst
+    );
+    input clk,rst,Din;
+    output Dout;
+    
+    reg[1:0]cur_state;
+    reg[1:0]nxt_state;
+    
+    parameter IDLE = 2'b00;
+    parameter S1 = 2'b01;
+    parameter S11 = 2'b10;
+    parameter S111 = 2'b11;
+    
+    assign Dout = (Din==0 && cur_state == S111)?1:0;
+    
+    always@(posedge clk)
+    begin
+        if(rst)
+            cur_state <= IDLE;
+        else
+            cur_state <= nxt_state;
+    end
+    always@(cur_state,Din)
+    begin
+        case(cur_state)
+            IDLE : if(Din)
+                      nxt_state <= S1;
+                   else
+                    nxt_state <= IDLE;
+            S1 : if(Din)
+                    nxt_state <= S11;
+                 else
+                    nxt_state <= IDLE;
+            S11 : if(Din)
+                     nxt_state <= S111;
+                  else
+                     nxt_state <= IDLE;
+            S111 : if(Din)
+                      nxt_state <= S111;
+                   else
+                      nxt_state <= IDLE;
+                                        
+                default nxt_state <= IDLE;
+         endcase 
+    end
+endmodule

@@ -1,0 +1,62 @@
+`timescale 1ns / 1ps
+
+module seq_1110_mealy_non_vrlp_TB(
+
+    );
+    reg rst,clk,Din;
+    wire Dout;
+    always #5 clk = ~clk;
+    seq_1110_mealy_non_overlapping uut(Dout,Din,clk,rst);
+    task initialise;
+    begin
+        rst = 0;
+        clk = 0;
+        Din = 0;
+    end
+    endtask
+    task reset;
+    begin
+        @(negedge clk)
+        rst = 1;
+        @(negedge clk)
+        rst = 0;
+    end
+    endtask
+    task Data(input a);
+    begin
+        @(posedge clk)
+        Din = a;
+    end
+    endtask
+    initial begin
+    initialise;
+    reset;
+    Data (1);
+    Data (1);
+    Data (1);
+    Data(0);
+    Data(1);
+    Data(1);
+    Data(0);
+    Data(1);
+    Data(1);
+    Data(1);
+    Data(1);
+    Data(0);
+    Data(0);
+    Data(1);
+    Data(0);
+    Data(1);
+    Data(1);
+    Data(0);
+    reset;
+    //repeat (4)
+      //      begin
+        //        Data ($random%2);
+          //  end
+    #50 $finish;
+    end
+    
+    
+   //end 
+endmodule
